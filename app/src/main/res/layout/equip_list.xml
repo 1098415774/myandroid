@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_height="100dp"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:id="@+id/t_id"
+        android:text="尚未添加设备"
+        android:textSize="30dp"
+        android:gravity="center"
+        android:background="@drawable/shape_label_orange"
+        tools:ignore="MissingConstraints" />
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:id="@+id/table_eq"
+        android:visibility="invisible"
+        tools:ignore="MissingConstraints"
+        >
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:textSize="30dp"
+                android:gravity="center"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+                android:text="CCCC"
+                android:id="@+id/table_eq_text1"
+                android:background="@drawable/shape_label_orange"
+                android:layout_weight="1"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+                android:textSize="30dp"
+                android:gravity="center"
+                android:text="BBBB"
+                android:background="@drawable/shape_label_orange"
+                android:layout_weight="1"
+                android:visibility="invisible"/>
+        </TableRow>
+    </TableLayout>
+
+</android.support.constraint.ConstraintLayout>
