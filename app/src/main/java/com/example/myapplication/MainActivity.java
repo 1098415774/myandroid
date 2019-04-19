@@ -8,12 +8,23 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Xml;
 
 import com.squareup.okhttp.Request;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlSerializer;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -22,9 +33,13 @@ public class MainActivity extends AppCompatActivity {
 
     private ViewPager my_viewpager;
 
-    private ArrayList<String> list = new ArrayList<>();
+    private ArrayList<String> titles = new ArrayList();
+
+    private HashMap<String,String> map = new HashMap<>();
 
     private List<Fragment> mFragment = new ArrayList<>();
+
+    private MyEquipCache equipCache = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,39 +47,30 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mytab = findViewById(R.id.mytab);
         my_viewpager = findViewById(R.id.my_viewpager);
-
-        mytab.addTab(mytab.newTab().setText("选项卡一"));
-        mytab.addTab(mytab.newTab().setText("选项"));
-        mytab.addTab(mytab.newTab().setText("选项卡三"));
-        mytab.addTab(mytab.newTab().setText("选项卡四"));
-        list.add("选项卡一");
-        list.add("选项");
-        list.add("选项卡三");
-        list.add("选项卡四");
+        List<EquipInfo> equips = getLocalEquipInfo();
+        mytab.addTab(mytab.newTab().setText("我的设备"));
+        mytab.addTab(mytab.newTab().setText("客厅"));
+        titles.add("我的设备");
+        titles.add("客厅");
+        map.put("100","");
+        map.put("101","");
+        for (EquipInfo equipInfo : equips){
+            String value = map.get(equipInfo.getArea());
+            value += equipInfo.getId() + ";";
+            map.put(equipInfo.getArea(),value);
+        }
         EquipInfoFragment fragment1 = new EquipInfoFragment();
         EquipInfoFragment fragment2 = new EquipInfoFragment();
-        EquipInfoFragment fragment3 = new EquipInfoFragment();
-        EquipInfoFragment fragment4 = new EquipInfoFragment();
         Bundle bundle1 = new Bundle();
-        bundle1.putString("flag",list.get(0));
+        bundle1.putString("equipids",map.get("100"));
         bundle1.putBoolean("show",false);
         fragment1.setArguments(bundle1);
         Bundle bundle2 = new Bundle();
-        bundle2.putString("flag",list.get(1));
+        bundle2.putString("equipids",map.get("101"));
         bundle2.putBoolean("show",true);
         fragment2.setArguments(bundle2);
-        Bundle bundle3 = new Bundle();
-        bundle3.putString("flag",list.get(2));
-        bundle3.putBoolean("show",true);
-        fragment3.setArguments(bundle3);
-        Bundle bundle4 = new Bundle();
-        bundle4.putString("flag",list.get(3));
-        bundle4.putBoolean("show",true);
-        fragment4.setArguments(bundle4);
         mFragment.add(fragment1);
         mFragment.add(fragment2);
-        mFragment.add(fragment3);
-        mFragment.add(fragment4);
 
         my_viewpager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
             @Override
@@ -80,10 +86,133 @@ public class MainActivity extends AppCompatActivity {
             @Nullable
             @Override
             public CharSequence getPageTitle(int position) {
-                return list.get(position);
+                return titles.get(position);
             }
         });
         my_viewpager.setOffscreenPageLimit(2);
         mytab.setupWithViewPager(my_viewpager);
+    }
+
+    private List<EquipInfo> getLocalEquipInfo(){
+        equipCache = MyEquipCache.getInstance();
+        ArrayList<EquipInfo> equipInfos = null;
+        FileInputStream inputStream = null;
+        String filepath = getApplicationContext().getFilesDir().getAbsolutePath();
+        try {
+            Log.i("FPA",filepath);
+            File file = new File(filepath + "/equipInfo.xml");
+            if (!file.exists()){
+                if (!file.createNewFile()){
+                    throw new Exception("file create fail");
+                }else {
+                    createEquipInfoXml(file);
+
+                }
+
+            }
+            XmlPullParser parser = Xml.newPullParser();
+            inputStream = new FileInputStream(file);
+            parser.setInput(inputStream,"UTF-8");
+            EquipInfo equipInfo = null;
+            int eventType = parser.getEventType();
+            while (eventType != XmlPullParser.END_DOCUMENT){
+                switch (eventType){
+                    case XmlPullParser.START_DOCUMENT:
+                        equipInfos = new ArrayList();
+                        break;
+                    case XmlPullParser.START_TAG:
+                        String name = parser.getName();
+                        if (name.equals("equip")){
+                            equipInfo = new EquipInfo();
+                        }else if (equipInfo != null){
+                            if (name.equalsIgnoreCase("area")){
+                                equipInfo.setArea(parser.nextText());
+                            }else if (name.equalsIgnoreCase("id")){
+                                equipInfo.setId(Integer.parseInt(parser.nextText()));
+                            }else if (name.equalsIgnoreCase("userId")){
+                                equipInfo.setUserId(parser.nextText());
+                            }else if (name.equalsIgnoreCase("type")){
+                                equipInfo.setType(Integer.parseInt(parser.nextText()));
+                            }
+                        }
+                        break;
+                    case XmlPullParser.END_TAG:
+                        String endname = parser.getName();
+                        if (endname.equalsIgnoreCase("equip") && equipInfo != null){
+                            equipCache.setEquipInfo(String.valueOf(equipInfo.getId()),equipInfo);
+                            equipInfos.add(equipInfo);
+                            equipInfo = null;
+                        }
+                        break;
+                }
+                eventType = parser.next();
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            if (inputStream != null){
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return equipInfos;
+    }
+
+    private void createEquipInfoXml(File file){
+        if (file == null || !file.exists()){
+            return;
+        }
+        FileOutputStream outputStream = null;
+        try {
+            outputStream = new FileOutputStream(file);
+            XmlSerializer serializer = Xml.newSerializer();
+            serializer.setOutput(outputStream, "UTF-8");
+            serializer.startDocument("UTF-8", true);
+            serializer.startTag(null,"equips");
+            testdata(serializer);
+            serializer.endTag(null,"equips");
+            serializer.endDocument();
+            serializer.flush();
+            outputStream.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void testdata(XmlSerializer serializer) throws IOException {
+        serializer.startTag(null,"equip");
+        serializer.startTag(null,"area");
+        serializer.text("100");
+        serializer.endTag(null,"area");
+        serializer.startTag(null, "id");
+        serializer.text("559654");
+        serializer.endTag(null, "id");
+        serializer.startTag(null, "userId");
+        serializer.text("889954");
+        serializer.endTag(null, "userId");
+        serializer.startTag(null, "type");
+        serializer.text("1");
+        serializer.endTag(null, "type");
+        serializer.endTag(null,"equip");
+
+        serializer.startTag(null,"equip");
+        serializer.startTag(null,"area");
+        serializer.text("100");
+        serializer.endTag(null,"area");
+        serializer.startTag(null, "id");
+        serializer.text("559656");
+        serializer.endTag(null, "id");
+        serializer.startTag(null, "userId");
+        serializer.text("889954");
+        serializer.endTag(null, "userId");
+        serializer.startTag(null, "type");
+        serializer.text("1");
+        serializer.endTag(null, "type");
+        serializer.endTag(null,"equip");
     }
 }

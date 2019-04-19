@@ -8,7 +8,7 @@
     <TextView
         android:layout_height="100dp"
         android:layout_width="match_parent"
-        android:layout_marginLeft="5dp"
+        android:layout_marginLeft="4dp"
         android:layout_marginRight="5dp"
         android:id="@+id/t_id"
         android:text="尚未添加设备"
@@ -18,42 +18,95 @@
         tools:ignore="MissingConstraints" />
 
     <TableLayout
+        android:id="@+id/table_eq"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:id="@+id/table_eq"
-        android:visibility="visible"
+        android:visibility="invisible"
         tools:ignore="MissingConstraints"
-        >
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/shape_label_orange"
-            >
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:textSize="30dp"
-                android:gravity="center"
-                android:layout_marginLeft="2dp"
-                android:layout_marginRight="2dp"
-                android:text="CCCC"
-                android:id="@+id/table_eq_text1"
-                android:background="@drawable/shape_label_orange"
-                android:layout_weight="1"/>
-            <!--<TextView-->
+        tools:layout_editor_absoluteX="26dp"
+        tools:layout_editor_absoluteY="230dp">
+
+        <!--<TableRow-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_marginLeft="3dp"-->
+            <!--android:layout_marginRight="3dp">-->
+
+            <!--<LinearLayout-->
+                <!--android:id="@+id/table_eq_text1"-->
                 <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="100dp"-->
+                <!--android:layout_height="150dp"-->
                 <!--android:layout_marginLeft="2dp"-->
                 <!--android:layout_marginRight="2dp"-->
-                <!--android:textSize="30dp"-->
+                <!--android:layout_weight="1"-->
+                <!--android:background="@drawable/shape_label_orange"-->
+                <!--android:orientation="vertical">-->
+
+                <!--<RelativeLayout-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="26dp">-->
+
+                    <!--<TextView-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="match_parent"-->
+                        <!--android:layout_alignParentLeft="true"-->
+                        <!--android:gravity="center_vertical"-->
+                        <!--android:text="温度计"-->
+                        <!--android:textSize="20dp" />-->
+
+                    <!--<TextView-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="22dp"-->
+                        <!--android:layout_marginTop="3dp"-->
+                        <!--android:gravity="center_vertical"-->
+                        <!--android:layout_alignParentRight="true"-->
+                        <!--android:background="@drawable/shape_label_orange_m"-->
+                        <!--android:text="客厅"-->
+                        <!--android:textSize="14dp" />-->
+                <!--</RelativeLayout>-->
+
+                <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:gravity="center_vertical"-->
+                    <!--android:text="设备离线"-->
+                    <!--android:textSize="15dp" />-->
+
+                <!--<RelativeLayout-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="match_parent">-->
+
+                    <!--<ImageView-->
+                        <!--android:layout_width="61dp"-->
+                        <!--android:layout_height="91dp"-->
+                        <!--android:layout_marginTop="3dp"-->
+                        <!--android:layout_alignParentLeft="true"-->
+                        <!--android:src="@mipmap/tem" />-->
+
+                    <!--<TextView-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_alignParentBottom="true"-->
+                        <!--android:layout_alignParentRight="true"-->
+                        <!--android:layout_marginRight="10dp"-->
+                        <!--android:text="&#45;&#45;\u00B0"-->
+                        <!--android:textSize="70dp"/>-->
+                <!--</RelativeLayout>-->
+
+            <!--</LinearLayout>-->
+
+            <!--<TextView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="150dp"-->
+                <!--android:layout_marginLeft="2dp"-->
+                <!--android:layout_marginRight="2dp"-->
+                <!--android:layout_weight="1"-->
+                <!--android:background="@drawable/shape_label_orange"-->
                 <!--android:gravity="center"-->
                 <!--android:text="BBBB"-->
-                <!--android:background="@drawable/shape_label_orange"-->
-                <!--android:layout_weight="1"-->
-                <!--android:visibility="invisible"/>-->
-        </TableRow>
+                <!--android:textSize="30dp"-->
+                <!--android:visibility="invisible" />-->
+        <!--</TableRow>-->
     </TableLayout>
 
 </android.support.constraint.ConstraintLayout>

@@ -10,6 +10,10 @@ public class EquipInfo {
 
     private TextView textView;
 
+    private String area;
+
+    private int type;
+
     public int getId() {
         return id;
     }
@@ -32,5 +36,21 @@ public class EquipInfo {
 
     public void setTextView(TextView textView) {
         this.textView = textView;
+    }
+
+    public String getArea() {
+        return area;
+    }
+
+    public void setArea(String area) {
+        this.area = area;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 }
