@@ -79,7 +79,7 @@ public class EquipInfoFragment extends Fragment {
             }
             createTableRow(ids);
             OkHttpUtils.get()
-                    .url("http://192.168.0.249:8080/mytest_war_exploded/user/getUserEquipInfo?token=zexhexzwxnxnnuro")
+                    .url("http://192.168.42.150:8081/mymqtt/user/getUserEquipInfo?token=cysdixwawqxdhpwj")
                     .build()
                     .execute(new StringCallback() {
                         @Override
@@ -89,17 +89,21 @@ public class EquipInfoFragment extends Fragment {
 
                         @Override
                         public void onResponse(String response) {
-                            JSONObject jsonObject = JSONObject.parseObject(response);
-                            String state = (String) jsonObject.get("state");
-                            if (Integer.parseInt(state) == 0){
-                                Log.e("RES", (String) jsonObject.get("msg"));
+                            try {
+                                JSONObject jsonObject = JSONObject.parseObject(response);
+                                String state = (String) jsonObject.get("state");
+                                if (Integer.parseInt(state) == 0){
+                                    Log.e("RES", (String) jsonObject.get("msg"));
+                                }
+                                JSONArray rows = (JSONArray) jsonObject.get("rows");
+                                Message message = Message.obtain(handler);
+                                Bundle data = new Bundle();
+                                data.putSerializable("data",rows);
+                                message.setData(data);
+                                message.sendToTarget();
+                            }catch (Exception e){
+                                Log.e("RES", e.getMessage());
                             }
-                            JSONArray rows = (JSONArray) jsonObject.get("rows");
-                            Message message = Message.obtain(handler);
-                            Bundle data = new Bundle();
-                            data.putSerializable("data",rows);
-                            message.setData(data);
-                            message.sendToTarget();
                         }
                     });
         }

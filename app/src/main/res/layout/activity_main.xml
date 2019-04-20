@@ -38,6 +38,7 @@
         android:layout_marginTop="50dp"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
+            android:soundEffectsEnabled="false"
             android:id="@+id/mytab"
             app:tabTextColor="#9EFFFFFF"
             app:tabSelectedTextColor="#ffffff"
