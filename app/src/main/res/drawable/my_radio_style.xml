@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_checked="false">
-        <shape>
-            <solid android:color="#ffffff"/>
-        </shape>
+    <item android:state_checked="false" android:color="#000000">
+        <!--<color android:color="#000000"/>-->
+        <!--<bitmap android:src="@drawable/tab0"  android:gravity="top"/>-->
     </item>
-    <item android:state_checked="true">
-        <shape>
-            <solid android:color="#A8A6A5"/>
-        </shape>
+    <item android:state_checked="true" android:color="#129fae">
+        <!--<color android:color="#129fae"/>-->
     </item>
 </selector>

@@ -43,7 +43,13 @@ public class EquipInfoFragment extends Fragment {
 
     private Map<Integer,EquipInfo> equipInfoMap = new HashMap<>();
 
-    private MyEquipCache equipCache = null;
+    private boolean isNotFoundshow = true;
+
+    private boolean ishow = false;
+
+    private String tabid = null;
+
+    private MyApplication myApplication = null;
 
     private Handler handler = new Handler(){
         @Override
@@ -51,9 +57,11 @@ public class EquipInfoFragment extends Fragment {
             JSONArray rows = (JSONArray) msg.getData().getSerializable("data");
             for (Object object : rows){
                 JSONObject jsonObject = (JSONObject) object;
+
                 EquipInfo equipInfo = equipInfoMap.get(jsonObject.getInteger("id"));
                 if (equipInfo.getTextView() != null){
                     equipInfo.getTextView().setText(jsonObject.getString("data") + "°");
+                    equipInfo.getTv_online().setVisibility(View.INVISIBLE);
                 }
             }
 
@@ -67,55 +75,18 @@ public class EquipInfoFragment extends Fragment {
         View view = inflater.inflate(R.layout.equip_list,container,false);
         t_id = view.findViewById(R.id.t_id);
         table_eq = view.findViewById(R.id.table_eq);
-        String equipids = getArguments().getString("equipids");
-        boolean ishow = getArguments().getBoolean("show");
-        if (!ishow){
-            t_id.setVisibility(View.INVISIBLE);
-            table_eq.setVisibility(View.VISIBLE);
-            String[] ids = null;
-            if (StringUtils.isNotEmpty(equipids)){
-                equipids = equipids.substring(0,equipids.lastIndexOf(';'));
-                ids = equipids.split(";");
-            }
-            createTableRow(ids);
-            OkHttpUtils.get()
-                    .url("http://192.168.42.150:8081/mymqtt/user/getUserEquipInfo?token=cysdixwawqxdhpwj")
-                    .build()
-                    .execute(new StringCallback() {
-                        @Override
-                        public void onError(Request request, Exception e) {
-                            Log.i("RES",e.getMessage());
-                        }
-
-                        @Override
-                        public void onResponse(String response) {
-                            try {
-                                JSONObject jsonObject = JSONObject.parseObject(response);
-                                String state = (String) jsonObject.get("state");
-                                if (Integer.parseInt(state) == 0){
-                                    Log.e("RES", (String) jsonObject.get("msg"));
-                                }
-                                JSONArray rows = (JSONArray) jsonObject.get("rows");
-                                Message message = Message.obtain(handler);
-                                Bundle data = new Bundle();
-                                data.putSerializable("data",rows);
-                                message.setData(data);
-                                message.sendToTarget();
-                            }catch (Exception e){
-                                Log.e("RES", e.getMessage());
-                            }
-                        }
-                    });
-        }
+        tabid = getArguments().getString("tabid");
         return view;
     }
 
     private void createTableRow(String[] ids) {
+        table_eq.removeAllViewsInLayout();
         equipInfoMap.clear();
-        equipCache = MyEquipCache.getInstance();
+
+        myApplication = MyApplication.getInstance();
         TableRow row = null;
         for (int i = 0; i < ids.length; i++){
-            EquipInfo object = equipCache.getEquipInfo(ids[i]);
+            EquipInfo object = myApplication.getEquipInfo(ids[i]);
             if (i%2 == 0){
                 row = new TableRow(this.getActivity());
                 TableLayout.LayoutParams tablerowParams = new TableLayout.LayoutParams();
@@ -163,6 +134,7 @@ public class EquipInfoFragment extends Fragment {
         layoutParams.rightMargin = ((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics()));
         layoutParams.weight = 1.0f;
         linearLayout.setLayoutParams(layoutParams);
+        linearLayout.setId(equipInfo.getId());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             linearLayout.setBackground(getResources().getDrawable(R.drawable.shape_label_orange));
         }
@@ -178,7 +150,7 @@ public class EquipInfoFragment extends Fragment {
         tv_eq_type_param.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
         tv_eq_type.setLayoutParams(tv_eq_type_param);
         tv_eq_type.setGravity(Gravity.CENTER_VERTICAL);
-        tv_eq_type.setText(equipInfo.getType() == 1? "温度计" : "test");
+        tv_eq_type.setText( StringUtils.isNotEmpty(equipInfo.getTypename()) ? equipInfo.getTypename() : "test");
         tv_eq_type.setTextSize(((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 14, getResources().getDisplayMetrics())));
         relativeLayout1.addView(tv_eq_type);
 
@@ -204,6 +176,7 @@ public class EquipInfoFragment extends Fragment {
         tv_eq_online.setText("设备离线");
         tv_eq_online.setTextSize(((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics())));
         linearLayout.addView(tv_eq_online);
+        equipInfo.setTv_online(tv_eq_online);
 
         RelativeLayout relativeLayout2 = new RelativeLayout(this.getActivity());
         LinearLayout.LayoutParams relativeparam2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT);
@@ -213,8 +186,12 @@ public class EquipInfoFragment extends Fragment {
         RelativeLayout.LayoutParams iv_type_param = new RelativeLayout.LayoutParams(((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 61, getResources().getDisplayMetrics())),((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 91, getResources().getDisplayMetrics())));
 //        iv_type_param.alignWithParent = true;
         iv_type_param.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+        if (equipInfo.getType() == 1){
+            iv_type.setImageDrawable(getResources().getDrawable(R.mipmap.tem));
+        }else if (equipInfo.getType() == 2){
+            iv_type.setImageDrawable(getResources().getDrawable(R.mipmap.ctrl));
+        }
         iv_type.setLayoutParams(iv_type_param);
-        iv_type.setImageDrawable(getResources().getDrawable(R.mipmap.tem));
         relativeLayout2.addView(iv_type);
 
         TextView tv_data = new TextView(this.getActivity());
@@ -228,10 +205,90 @@ public class EquipInfoFragment extends Fragment {
         tv_data.setText("--°");
         equipInfo.setTextView(tv_data);
         equipInfoMap.put(equipInfo.getId(),equipInfo);
-        relativeLayout2.addView(tv_data);
+        if (equipInfo.getType() != 1){
+            linearLayout.setClickable(true);
+            linearLayout.setOnClickListener(new MyEquipViewOnClickListener());
+        }else {
+            linearLayout.setClickable(false);
+            relativeLayout2.addView(tv_data);
+        }
         linearLayout.addView(relativeLayout2);
         return linearLayout;
     }
 
+    class MyEquipViewOnClickListener implements View.OnClickListener{
+        @Override
+        public void onClick(View v) {
+            EquipInfo equipInfo = myApplication.getEquipInfo(String.valueOf(v.getId()));
+            if (equipInfo == null){
+                return;
+            }
+            switch (equipInfo.getType()){
+                case 2:
+                    Log.i("ETP","this is a controller");
+                    break;
+            }
+        }
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        myApplication = MyApplication.getInstance();
+        String equipids = myApplication.getIdsInTabmap(tabid);
+        isNotFoundshow = true;
+        if (StringUtils.isNotEmpty(equipids)){
+            isNotFoundshow = false;
+            ishow = true;
+        }
+        if (!isNotFoundshow && ishow){
+            t_id.setVisibility(View.INVISIBLE);
+            table_eq.setVisibility(View.VISIBLE);
+
+            String[] ids = null;
+            if (StringUtils.isNotEmpty(equipids)){
+                equipids = equipids.substring(0,equipids.lastIndexOf(';'));
+                ids = equipids.split(";");
+            }
+            createTableRow(ids);
+        }else {
+            t_id.setVisibility(View.VISIBLE);
+            table_eq.setVisibility(View.INVISIBLE);
+        }
+        if (myApplication.getUserInfo() != null && myApplication.getUserInfo().getEquipInfoList() != null){
+            for (EquipInfo equipInfo : myApplication.getUserInfo().getEquipInfoList()){
+                myApplication.getEquipInfo(String.valueOf(equipInfo.getId())).getTv_online().setVisibility(View.VISIBLE);
+            }
+        }
+        if (ishow && StringUtils.isNotEmpty(myApplication.getToken())){
+            OkHttpUtils.get()
+                    .url("http://10.50.35.173:8081/mymqtt/user/getUserEquipInfo?token=" + myApplication.getToken())
+                    .build()
+                    .execute(new StringCallback() {
+                        @Override
+                        public void onError(Request request, Exception e) {
+                            Log.i("RES",e.getMessage());
+                        }
+
+                        @Override
+                        public void onResponse(String response) {
+                            try {
+                                JSONObject jsonObject = JSONObject.parseObject(response);
+                                String state = (String) jsonObject.get("state");
+                                if (Integer.parseInt(state) == 0){
+                                    Log.e("RES", (String) jsonObject.get("msg"));
+                                }
+                                JSONArray rows = (JSONArray) jsonObject.get("rows");
+                                Message message = Message.obtain(handler);
+                                Bundle data = new Bundle();
+                                data.putSerializable("data",rows);
+                                message.setData(data);
+                                message.sendToTarget();
+                            }catch (Exception e){
+                                Log.e("RES", e.getMessage());
+                            }
+                        }
+                    });
+        }
+    }
 }

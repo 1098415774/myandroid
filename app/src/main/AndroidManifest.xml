@@ -19,17 +19,28 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".solution.activity.ActionChoseEquipActivity"
+            android:label="@string/title_activity_action_chose_equip"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".solution.activity.SolutionActivity"
+            android:label="@string/title_activity_solution"
+            android:theme="@style/AppTheme.NoActionBar" /> <!-- <activity -->
+        <!-- android:name=".AddEquipActity" -->
+        <!-- android:label="@string/title_activity_add_equip_actity" -->
+        <!-- android:theme="@style/AppTheme.NoActionBar"></activity> -->
+        <activity
+            android:name=".LoginActivity"
+            android:label="@string/title_activity_login"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".Main3Activity"
             android:label="@string/title_activity_main3"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <!--<activity-->
-            <!--android:name=".Main2Activity"-->
-            <!--android:label="@string/title_activity_main2"-->
-            <!--android:theme="@style/AppTheme.NoActionBar" />-->
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".MyMainActivity"
             android:label="@string/title_activity_my_main"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -37,11 +48,13 @@
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity">
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
 
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
     </application>
 

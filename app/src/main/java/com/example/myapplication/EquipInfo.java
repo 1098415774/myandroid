@@ -8,11 +8,17 @@ public class EquipInfo {
 
     private String userId;
 
+    private int status;
+
     private TextView textView;
+
+    private TextView tv_online;
 
     private String area;
 
     private int type;
+
+    private String typename;
 
     public int getId() {
         return id;
@@ -52,5 +58,29 @@ public class EquipInfo {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public TextView getTv_online() {
+        return tv_online;
+    }
+
+    public void setTv_online(TextView tv_online) {
+        this.tv_online = tv_online;
+    }
+
+    public String getTypename() {
+        return typename;
+    }
+
+    public void setTypename(String typename) {
+        this.typename = typename;
     }
 }

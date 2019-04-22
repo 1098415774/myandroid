@@ -3,4 +3,8 @@
     <string name="title_activity_my_main">MyMainActivity</string>
     <string name="title_activity_main2">Main2Activity</string>
     <string name="title_activity_main3">Main3Activity</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_add_equip_actity">AddEquipActity</string>
+    <string name="title_activity_solution">SolutionActivity</string>
+    <string name="title_activity_action_chose_equip">ActionChoseEquipActivity</string>
 </resources>

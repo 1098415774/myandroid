@@ -35,7 +35,7 @@
                 <RadioGroup
                     android:id="@+id/main_tab_group"
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="60dp"
                     android:layout_gravity="bottom"
                     android:gravity="bottom"
                     android:orientation="horizontal" >
@@ -45,21 +45,37 @@
                         android:checked="true"
                         android:layout_weight="1"
                         android:layout_width="match_parent"
-                        android:layout_height="50dp"
+                        android:layout_height="match_parent"
                         android:button="@null"
-                        android:background="@drawable/my_radio_style"
-                        android:gravity="center"
+                        android:background="#00ffffff"
+                        android:textColor="@drawable/my_radio_style"
+                        android:gravity="bottom|center_horizontal"
+                        android:soundEffectsEnabled="false"
                         android:text="首页" />
 
                     <RadioButton
-                        android:id="@+id/guide_store"
-                        android:layout_width="match_parent"
-                        android:layout_height="50dp"
+                        android:id="@+id/guide_smart"
                         android:layout_weight="1"
-                        android:background="@drawable/my_radio_style"
-                        android:gravity="center"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:button="@null"
-                        android:text="商城" />
+                        android:background="#00ffffff"
+                        android:textColor="@drawable/my_radio_style"
+                        android:gravity="bottom|center_horizontal"
+                        android:soundEffectsEnabled="false"
+                        android:text="智能" />
+
+                    <RadioButton
+                        android:id="@+id/guide_my"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="#00ffffff"
+                        android:textColor="@drawable/my_radio_style"
+                        android:gravity="bottom|center_horizontal"
+                        android:soundEffectsEnabled="false"
+                        android:button="@null"
+                        android:text="我的" />
 
                 </RadioGroup>
             </FrameLayout>
